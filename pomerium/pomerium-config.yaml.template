@@ -1,0 +1,49 @@
+# See detailed configuration settings : https://www.pomerium.com/docs/reference/
+
+authenticate_service_url: https://authenticate.DOMAIN
+
+autocert: false
+
+certificate_file: /pomerium/cert.pem
+certificate_key_file: /pomerium/privkey.pem
+
+idp_provider_url: http://idp.DOMAIN:9000
+idp_provider: oidc
+idp_client_id: pomerium_id
+idp_client_secret: pomerium_secret
+# idp_scopes: "audience:server:client_id:epinio-api"
+
+# Generate 256 bit random keys  e.g. `head -c32 /dev/urandom | base64`
+cookie_secret: M5CaZ4glwWVX+WbJrAuTtR2GTa81I8t08GflNu3mqkI=
+
+# https://pomerium.io/reference/#routes
+routes:
+    # Epinio
+  - from: https://epinio.DOMAIN
+    to: https://epinio.DOMAIN:8443
+    tls_skip_verify: true
+    allow_public_unauthenticated_access: true
+    policy:
+      - allow:
+          or:
+            - domain:
+                is: example.com
+    # Neuvector
+  - from: https://neuvector.DOMAIN
+    to: https://neuvector.DOMAIN:8443
+    tls_skip_verify: true
+    policy:
+      - allow:
+          or:
+            - domain:
+                is: example.com
+    # Dex
+  - from: https://auth.DOMAIN
+    to: https://auth.DOMAIN:8443
+    tls_skip_verify: true
+    allow_public_unauthenticated_access: true
+    policy:
+      - allow:
+          or:
+            - domain:
+                is: example.com

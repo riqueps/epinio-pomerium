@@ -1,0 +1,15 @@
+
+---
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  namespace: traefik
+  name: epinio
+spec:
+  secretName: epinio-tls
+  issuerRef:
+    kind: ClusterIssuer
+    name: letsencrypt-epinio
+  commonName: '*.epinio.example.com'
+  dnsNames:
+    - '*.epinio.example.com'

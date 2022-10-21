@@ -1,0 +1,37 @@
+version: "3"
+services:
+  pomerium:
+    image: pomerium/pomerium:latest
+    environment:
+      # Generate new secret keys. e.g. `head -c32 /dev/urandom | base64`
+      - COOKIE_SECRET=M5CaZ4glwWVX+WbJrAuTtR2GTa81I8t08GflNu3mqkI=
+    volumes:
+      # Mount your domain's certificates : https://www.pomerium.com/docs/reference/certificates
+      - ./DOMAIN-CERT-KEY:/pomerium/privkey.pem:ro
+      - ./DOMAIN-CERT:/pomerium/cert.pem:ro
+      # Mount your config file : https://www.pomerium.com/docs/reference/
+
+      - ./pomerium-config.yaml:/pomerium/config.yaml
+    ports:
+      - 443:443
+      - 5443:5443
+      - 17946:7946
+    depends_on:
+      - identityprovider
+  
+  # Test service
+  # verify:
+  #   image: pomerium/verify
+  #   expose:
+  #     - 8000
+
+  identityprovider:
+    image: qlik/simple-oidc-provider
+    environment:
+      - CONFIG_FILE=/etc/identityprovider.json
+      - USERS_FILE=/etc/identityprovider-users.json
+    volumes:
+      - ./identityprovider.json:/etc/identityprovider.json:ro
+      - ./identityprovider-users.json:/etc/identityprovider-users.json:ro
+    ports:
+      - 9000:9000

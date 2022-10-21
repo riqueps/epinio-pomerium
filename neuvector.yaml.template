@@ -1,0 +1,19 @@
+manager:
+  env:
+    ssl: false
+  ingress:
+    enabled: true
+    host: NEUVECTOR.DOMAIN
+    tls: true
+    annotations:
+      traefik.ingress.kubernetes.io/router.entrypoints: websecure
+      traefik.ingress.kubernetes.io/router.tls: 'true'
+  svc:
+    type: ClusterIP
+controller:
+  replicas: 1
+cve:
+  replicas: 1
+k3s:
+  enabled: true
+  runtimePath: /run/k3s/containerd/containerd.sock

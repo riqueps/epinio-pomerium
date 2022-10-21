@@ -1,0 +1,32 @@
+{
+    "idp_name": "http://idp.DOMAIN:9000",
+    "port": 9000,
+    "client_config": [
+      {
+        "client_id": "pomerium_id",
+        "client_secret": "pomerium_secret",
+        "redirect_uris": [
+          "https://authenticate.DOMAIN/oauth2/callback"
+        ]
+      },
+      {
+        "client_id": "neuvector_id",
+        "client_secret": "neuvector_secret",
+        "redirect_uris": [
+          "https://neuvector.DOMAIN/openId_auth"
+        ]
+      },
+      {
+        "client_id": "dex_id",
+        "client_secret": "dex_secret",
+        "redirect_uris": [
+          "https://auth.DOMAIN/callback"
+        ]
+      } 
+    ],
+    "claim_mapping": {
+      "openid": [ "sub" ],
+      "email": [ "email", "email_verified" ],
+      "profile": [ "name", "nickname" ]
+    }
+  }

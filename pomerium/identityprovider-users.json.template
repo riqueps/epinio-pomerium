@@ -1,0 +1,11 @@
+[
+  {
+    "id": "ADM_USER",
+    "email": "admin@example.com",
+    "email_verified": true,
+    "name": "admin",
+    "nickname": "admin",
+    "password": "password",
+    "groups": ["Everyone", "Engineering"]
+  }
+]
