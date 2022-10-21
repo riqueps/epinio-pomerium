@@ -7,7 +7,7 @@
 
 **Note:** *epinio cli is not working due certificate validation issue*
 
-### Deploying Epinio - in dev mode with wildcard SSL certificates from letsencrypt
+### Deploying Epinio - with wildcard SSL certificates from letsencrypt
 `DNS_ZONE_NAME=maindomain.com DOMAIN=subdomain.maindomain.com make install-epinio`
 
 Note: Make sure you have the following fields in your Makefile
@@ -23,6 +23,7 @@ export AWS_SECRET_ACCESS_KEY ?= "wO6NGXasdasdZ0Ns/ZbCx6a"
 - K3D cluster is exposing 8080 and 8443 ports.
 - Check if pomerium and oidc containers successfully started (docker contianer ls -a)
 - For valid DNS name, create DNS entry poiting to your IP
+- Epinio and Dex URL are bypassing Pomerium authentication
 - After the first epinio cli login, using default credentials of Oidc user, run the command bellow to grant *admin* role to it.
 
 ```
