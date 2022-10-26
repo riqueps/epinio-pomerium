@@ -3,11 +3,13 @@ manager:
     ssl: false
   ingress:
     enabled: true
+    ingressClassName: pomerium
     host: NEUVECTOR.DOMAIN
     tls: true
     annotations:
-      traefik.ingress.kubernetes.io/router.entrypoints: websecure
-      traefik.ingress.kubernetes.io/router.tls: 'true'
+      ingress.pomerium.io/allow_any_authenticated_user: 'true'
+      ingress.pomerium.io/pass_identity_headers: 'true'
+      ingress.pomerium.io/tls_skip_verify: 'true'
   svc:
     type: ClusterIP
 controller:

@@ -1,0 +1,17 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: oidc-users-config
+data:
+  identityprovider-users.json: |
+    [
+      {
+      "id": "USER",
+      "email": "USER@example.com",
+      "email_verified": true,
+      "name": "USER",
+      "nickname": "USER",
+      "password": "PASSWORD",
+      "groups": ["Everyone", "Engineering"]
+      }
+    ]

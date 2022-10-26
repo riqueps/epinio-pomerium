@@ -1,0 +1,26 @@
+---
+apiVersion: v1
+kind: Secret
+metadata:
+  name: idp
+  namespace: pomerium
+type: Opaque
+stringData:
+  client_id: "pomerium_id"
+  client_secret: "pomerium_secret"
+---
+apiVersion: ingress.pomerium.io/v1
+kind: Pomerium
+metadata:
+  name: global
+spec:
+  secrets: pomerium/bootstrap
+  authenticate:
+      url: https://authenticate.DOMAIN
+  identityProvider:
+      provider: oidc
+      secret: pomerium/idp
+      url: "https://idp.DOMAIN"
+      scopes: ["openid","profile","email"]
+  certificates:
+    - pomerium/pomerium-proxy-tls

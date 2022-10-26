@@ -1,6 +1,6 @@
 export CLUSTER_NAME ?= epinio
 export TMP_DIR ?= /tmp
-IP_ADDR := $(shell ifconfig -a | grep "inet " | awk 'NR==1{print $$2}')
+IP_ADDR := $(shell hostname -I | awk '{print $$1}')
 export DOMAIN ?= $(IP_ADDR).sslip.io
 export EPINIO_SERVER_VERSION ?= 1.3.0
 export DNS_ZONE_NAME ?= example.com
@@ -10,6 +10,9 @@ export AWS_HOSTED_ZONE_ID ?= XXXXX
 export AWS_ACCESS_KEY_ID  ?= XXXXX
 export AWS_SECRET_ACCESS_KEY ?= XXXXX
 export AWS_SECRET_ACCESS_KEY_CRYPTO := '$(shell echo -n ${AWS_SECRET_ACCESS_KEY} | base64)'
+
+export USER ?= admin
+export PASSWORD ?= password
 
 # sudo systemctl stop apache2; sudo systemctl disable apache2
 check-port-block:
@@ -27,15 +30,11 @@ check-dependencies: check-port-block
 
 delete-cluster:
 	k3d cluster delete $(CLUSTER_NAME)
-	docker-compose -f pomerium/docker-compose.yaml down
-	-rm pomerium/pomerium-cert.crt
-	-rm pomerium/_wildcard.172.18.0.1.sslip.io-key.pem
-	-rm pomerium/_wildcard.172.18.0.1.sslip.io.pem
-	-rm pomerium/pomerium-cert.key
-	-rm pomerium/pomerium-config.yaml
-	-rm pomerium/identityprovider-users.json
-	-rm pomerium/identityprovider.json
-	-rm pomerium/docker-compose.yaml
+	-docker-compose -f pomerium/docker-compose.yaml down
+	-rm pomerium/oidc-ingress.yaml
+	-rm pomerium/oidc-provider-configmap.yaml
+	-rm pomerium/oidc-user-configmap.yaml
+	-rm pomerium/pomerium.yaml
 	-rm dex-config.yaml
 	-rm epinioIssuer.yaml
 	-rm wildcardCertificate.yaml
@@ -52,12 +51,12 @@ install-cert-manager:
 
 create-cluster:
 	#k3d cluster create $(CLUSTER_NAME) -p '80:80@loadbalancer' -p '443:443@loadbalancer'
-	k3d cluster create epinio --k3s-arg "--disable=traefik@server:0" -p '8080:80@loadbalancer' -p '8443:443@loadbalancer'
+	k3d cluster create epinio --k3s-arg "--disable=traefik@server:0" -p '80:80@loadbalancer' -p '443:443@loadbalancer'
 	kubectl rollout status deployment metrics-server -n kube-system --timeout=480s
 	
 	# Install Traefik manually
-	helm repo add traefik https://helm.traefik.io/traefik && helm repo update
-	helm install traefik -n traefik --create-namespace  traefik/traefik
+#	helm repo add traefik https://helm.traefik.io/traefik && helm repo update
+#	helm install traefik -n traefik --create-namespace  traefik/traefik
 
 deploy-epinio:
 	./makefile.sh deploy-epinio

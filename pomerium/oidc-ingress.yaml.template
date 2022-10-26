@@ -1,0 +1,23 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: qlik-oidc
+  annotations:
+    ingress.pomerium.io/allow_public_unauthenticated_access: 'true'
+    ingress.pomerium.io/pass_identity_headers: 'true'
+spec:
+  ingressClassName: pomerium
+  tls:
+    - hosts: 
+      - idp.DOMAIN
+  rules:
+  - host: idp.DOMAIN
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: qlik-oidc
+            port:
+              number: 9000

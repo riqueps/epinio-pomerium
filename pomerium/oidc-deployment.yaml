@@ -1,0 +1,50 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: qlik-oidc
+  namespace: default
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: qlik-oidc
+  template:
+    metadata:
+      labels:
+        app: qlik-oidc
+    spec:
+      containers:
+      - image: qlik/simple-oidc-provider:0.2.2
+        imagePullPolicy: IfNotPresent
+        name: simple-oidc-provider
+        ports:
+        - containerPort: 9000
+        env:
+        - name: CONFIG_FILE
+          value: /etc/identityprovider.json
+        - name: USERS_FILE
+          value: /etc/identityprovider-users.json
+        volumeMounts:
+        - name: oidc-users-config
+          mountPath: /etc/identityprovider-users.json
+          subPath: identityprovider-users.json
+          readOnly: true
+        - name: oidc-provider-config
+          mountPath: /etc/identityprovider.json
+          subPath: identityprovider.json
+          readOnly: true
+      volumes:
+      - name: oidc-users-config
+        persistentVolumeClaim:
+        configMap:
+          name: oidc-users-config
+          items:
+          - key: identityprovider-users.json
+            path: identityprovider-users.json
+      - name: oidc-provider-config
+        persistentVolumeClaim:
+        configMap:
+          name: oidc-provider-config
+          items:
+          - key: identityprovider.json
+            path: identityprovider.json
